@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-server-test
+  labels:
+    app: json-server-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: json-server-test
+  template:
+    metadata:
+      labels:
+        app: json-server-test
+    spec:
+      containers:
+      - name: json-server-test
+        image: a866325272/js 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

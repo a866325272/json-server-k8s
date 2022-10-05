@@ -1,0 +1,65 @@
+編輯Dockerfile
+vim Dockerfile
+
+FROM clue/json-server:latest
+COPY db.json /data/db.json
+COPY db.json /data/articles.json
+
+
+建立容器映像檔
+docker build -t a866325272/js .
+
+將映像檔推上docker hub
+docker login
+Username:
+Password:
+docker push a866325272/js
+
+編輯deployment.yaml
+vim deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-server-test
+  labels:
+    app: json-server-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: json-server-test
+  template:
+    metadata:
+      labels:
+        app: json-server-test
+    spec:
+      containers:
+      - name: json-server-test
+        image: a866325272/js 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
+部署
+kubectl create -f deployment.yaml
+
+編輯service.yaml
+vim service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: js-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30390
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: json-server-test
+
+部署
+kubectl create -f service.yaml
